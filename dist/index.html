@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="https://dl.dropbox.com/s/xx1f2zi83cdy5er/_modified-csstyle.scss" href="css/app.css">
+    <link rel="stylesheet" href="css/app.css">
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/addons/p5.dom.min.js"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+            crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>Milestone</title>
+</head>
+<body>
+
+    <div id="mainCanvas">
+
+    </div>
+
+    <div class="overlay-content">
+        <div class="centered">
+            centered
+            <div class="circularProgress">
+                <div class="circularProgress__overlay"></div>
+                <input type="range" min="0" max="100" step="1"
+                       oninput="setPercentage(this.value)" onchange="setPercentage(this.value)" class="circularProgress__range">
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

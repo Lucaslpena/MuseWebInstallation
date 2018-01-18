@@ -1,0 +1,20 @@
+{
+  "name": "milestone",
+  "version": "1.0.0",
+  "description": "used for milestone conference with muse",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.14.11"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "build-css": "node-sass --include-path scss src/scss/app.scss   dist/css/app.css",
+    "watch-sass": "sass --watch src/scss/app.scss:dist/css/app.css"
+  },
+  "author": "",
+  "license": "MIT"
+}
