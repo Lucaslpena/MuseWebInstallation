@@ -1,14 +1,23 @@
+var example = example || {};
 $(function () {
-    var element = $('.circularProgress');
+    var circ1 = $('.circularProgress');
     var textElement = $('.circularProgress__overlay');
 
     window.setPercentage = function setPercentage(p){
-        element[0].className = 'circularProgress --' + p;
+        circ1[0].className = 'circularProgress --' + p;
         textElement.text(p+'%');
-    }
+    };
 
     window.setPercentage(25);
 
+    var oscPort = new osc.WebSocketPort({
+        url: "ws://localhost:8081"
+    });
+    oscPort.open();
+    oscPort.on("message", function (msg) {
+        //console.log("message", msg);
+        setData(msg);
+    });
 });
 
 
@@ -17,6 +26,30 @@ var canvas;
 var maxParticles, particleBreakDistance;
 var particleCountSlider, lineDistanceSlider, speedSlider;
 var particles = [];
+
+var mAlphaAbs = 0.01, mBetaAbs = 0.01, mDeltaAbs = 0.01, mThetaAbs = 0.01, mGammaAbs = 0.01, mAbs;
+
+function setData(msg){
+    switch (msg.address){
+        case ('/muse/elements/alpha_absolute'):
+            mAlphaAbs = msg.args[0];
+            break;
+        case ('/muse/elements/beta_absolute'):
+            mBetaAbs = msg.args[0];
+            break;
+        case ('/muse/elements/delta_absolute'):
+            mDeltaAbs = msg.args[0];
+            break;
+        case ('/muse/elements/gamma_absolute'):
+            mGammaAbs = msg.args[0];
+            break;
+        case ('/muse/elements/theta_absolute'):
+            mThetaAbs = msg.args[0];
+            break;
+        default :
+            break;
+    }
+}
 
 function setup() {
     canvas = createCanvas(windowWidth, windowHeight);
@@ -122,10 +155,18 @@ function draw() {
     text("speedSlider", speedSlider.x * 2 + speedSlider.width, 105);
 
     //console.log(speedSlider.value() * .01);
+    mAbs = (mAlphaAbs + mBetaAbs + mDeltaAbs + mGammaAbs + mThetaAbs) / 5;
+
+    // console.log(mAbs);
+    // console.log(mAlphaAbs);
+    // console.log(mBetaAbs);
+    // console.log(mDeltaAbs);
+    // console.log(mGammaAbs);
+    // console.log(mThetaAbs);
 
 
     loadParticles();
     drawParticles();
-    particleBreakDistance = max(width, height) / lineDistanceSlider.value();
-    //particleBreakDistance = min(particleBreakDistance + 1, width / 12);
+    particleBreakDistance = max(width, height) / map(mAbs, -0.4, 0.8, 5, 25);
+    //console.log(map(mAbs, -0.4, 0.8, 5, 25));
 }

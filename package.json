@@ -4,10 +4,15 @@
   "description": "used for milestone conference with muse",
   "main": "app.js",
   "dependencies": {
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "node-muse": "^1.1.0",
+    "ws": "^4.0.0"
   },
   "devDependencies": {
-    "nodemon": "^1.14.11"
+    "bleat": "^0.1.8",
+    "noble": "^1.8.1",
+    "nodemon": "^1.14.11",
+    "osc": "^2.2.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

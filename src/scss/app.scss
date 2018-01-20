@@ -150,6 +150,9 @@ canvas{
   align-content: center;
   justify-content: center;
   align-items: center;
+  .centered{
+    display: flex;
+  }
 }
 
 
@@ -217,3 +220,16 @@ $half: round($loops / 2);
     }
   }
 }
+
+.threedee {
+  background-color: red;
+  height: 400px;
+  width: 400px;
+  #_3d {
+    width: 100%;
+    height:100%;
+  }
+}
+
+
+
