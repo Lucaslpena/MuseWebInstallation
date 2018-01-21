@@ -23,7 +23,10 @@ canvas {
   justify-content: center;
   align-items: center; }
   .overlay-content .centered {
-    display: flex; }
+    display: flex;
+    display: flex;
+    width: 600px;
+    justify-content: space-between; }
 
 /* circular */
 .circularProgress {
@@ -251,13 +254,5 @@ canvas {
     background-image: linear-gradient(86.4deg, #2ecc71 50%, transparent 50%, transparent), linear-gradient(270deg, #2ecc71 50%, #d0d0d0 50%, #d0d0d0); }
   .circularProgress.\--100 {
     background-image: linear-gradient(90deg, #2ecc71 50%, transparent 50%, transparent), linear-gradient(270deg, #2ecc71 50%, #d0d0d0 50%, #d0d0d0); }
-
-.threedee {
-  background-color: red;
-  height: 400px;
-  width: 400px; }
-  .threedee #_3d {
-    width: 100%;
-    height: 100%; }
 
 /*# sourceMappingURL=app.css.map */

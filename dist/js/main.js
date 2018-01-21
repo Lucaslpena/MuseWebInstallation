@@ -1,13 +1,13 @@
 var example = example || {};
 $(function () {
+
     var circ1 = $('.circularProgress');
     var textElement = $('.circularProgress__overlay');
-
     window.setPercentage = function setPercentage(p){
         circ1[0].className = 'circularProgress --' + p;
+        circ1[1].className = 'circularProgress --' + p;
         textElement.text(p+'%');
     };
-
     window.setPercentage(25);
 
     var oscPort = new osc.WebSocketPort({
@@ -28,6 +28,8 @@ var particleCountSlider, lineDistanceSlider, speedSlider;
 var particles = [];
 
 var mAlphaAbs = 0.01, mBetaAbs = 0.01, mDeltaAbs = 0.01, mThetaAbs = 0.01, mGammaAbs = 0.01, mAbs;
+
+var head;
 
 function setData(msg){
     switch (msg.address){
@@ -52,7 +54,7 @@ function setData(msg){
 }
 
 function setup() {
-    canvas = createCanvas(windowWidth, windowHeight);
+    canvas = createCanvas(windowWidth, windowHeight, WEBGL);
 
     console.log("Canvas Size :" + width + "x" + height);
     canvas.parent('mainCanvas');
@@ -70,6 +72,9 @@ function setup() {
 
     speedSlider = createSlider(-100, 200, 0);
     speedSlider.position(20, 100);
+}
+function preload() {
+    head = loadModel('assets/head.obj');
 }
 function loadParticles(){
     while (particles.length != particleCountSlider.value()) {
@@ -146,13 +151,15 @@ function drawParticles() {
     }
 
 }
-
 function draw() {
     background(0,136,210);
 
-    text("particleCount", particleCountSlider.x * 2 + particleCountSlider.width, 35);
-    text("lineDistanceSlider", lineDistanceSlider.x * 2 + lineDistanceSlider.width, 75);
-    text("speedSlider", speedSlider.x * 2 + speedSlider.width, 105);
+    //rotateX(mouseY/100);
+    //rotateY(mouseX/100);
+
+    // text("particleCount", particleCountSlider.x * 2 + particleCountSlider.width, 35);
+    // text("lineDistanceSlider", lineDistanceSlider.x * 2 + lineDistanceSlider.width, 75);
+    // text("speedSlider", speedSlider.x * 2 + speedSlider.width, 105);
 
     //console.log(speedSlider.value() * .01);
     mAbs = (mAlphaAbs + mBetaAbs + mDeltaAbs + mGammaAbs + mThetaAbs) / 5;
@@ -165,8 +172,23 @@ function draw() {
     // console.log(mThetaAbs);
 
 
+    translate(-width/2,-height/2,0);
+
+
     loadParticles();
     drawParticles();
     particleBreakDistance = max(width, height) / map(mAbs, -0.4, 0.8, 5, 25);
     //console.log(map(mAbs, -0.4, 0.8, 5, 25));
+
+
+    translate(width/2,height/2+50,0);
+    // var xLimit = constrain(mouseY/100,-7,7);
+    // // console.log(xLimit);
+    // var yLimit = constrain(mouseX/100, -90, 90);
+    // console.log(yLimit);
+
+    rotateY(millis() / 1000);
+    //rotateY(yLimit);
+    scale(260);
+    model(head);
 }
