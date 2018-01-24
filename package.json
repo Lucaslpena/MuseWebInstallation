@@ -5,7 +5,10 @@
   "main": "app.js",
   "dependencies": {
     "express": "^4.16.2",
+    "johnny-five": "^0.13.0",
+    "node-fadecandy": "^2.0.1",
     "node-muse": "^1.1.0",
+    "node-pixel": "^0.9.3",
     "ws": "^4.0.0"
   },
   "devDependencies": {

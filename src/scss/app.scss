@@ -132,7 +132,7 @@
 
 body{
   margin:0;
-  font:normal 75% Arial, Helvetica, sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 canvas{
   display: block;
@@ -153,21 +153,31 @@ canvas{
   .centered{
     display: flex;
     display: flex;
-    width: 600px;
+    width: 800px;
     justify-content: space-between;
   }
 }
 
+$ms_blue: #0099DA;
+$ms_yellow: #FFE700;
+$ms_navy: #023852;
+$ms_grey: #9dadb7;
 
 /* circular */
-$backgroundBarColor: #d0d0d0;
-$successBarColor: #2ecc71;
+$backgroundBarColor: $ms_grey;
+//$successBarColor: #2ecc71;
+//$warningBarColor: #f39c12;
+//$dangerBarColor: #e74c3c;
+
+$successBarColor: $ms_yellow;
 $warningBarColor: #f39c12;
 $dangerBarColor: #e74c3c;
+
 $overlayColor: #ddd;
 $backColor: #f2f2f2;
-$barHeight: 12px;
-$elementSize: 120px;
+$barHeight: 33px;
+$elementSize: 200px;
+
 
 $step: 1; // step of % (100/$step = number of created classes)
 $loops: round(100 / $step);
@@ -182,7 +192,7 @@ $half: round($loops / 2);
   width: $elementSize;
   height: $elementSize;
   border-radius: 50%;
-  border: 2px solid $backColor; // remove gradient color
+  border: px solid $backColor; // remove gradient color
   background-color: $backgroundBarColor; // default 100%
 
   @include child(range) {
@@ -194,13 +204,14 @@ $half: round($loops / 2);
     position: absolute;
     width: $elementSize - $barHeight;
     height: $elementSize - $barHeight;
-    background-color: $overlayColor;
+    background-color: $ms_blue;
     border-radius: 50%;
     margin-left: $barHeight/2;
     margin-top: $barHeight/2;
     text-align: center;
     line-height: $elementSize - $barHeight;
-    font-size: 24px;
+    color: $ms_navy;
+    font-size: 50px;
   }
 
   // Loop for creating modifier classes
@@ -213,7 +224,6 @@ $half: round($loops / 2);
     @include modifier(#{$i*$step}) {
 
       @if $i < $half {
-
         $nextdeg: 90deg + ( $increment * $i );
         background-image: linear-gradient(90deg, $backgroundBarColor 50%, transparent 50%, transparent), linear-gradient($nextdeg, $barColor 50%, $backgroundBarColor 50%, $backgroundBarColor);
       } @else {

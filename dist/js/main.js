@@ -5,10 +5,11 @@ $(function () {
     var textElement = $('.circularProgress__overlay');
     window.setPercentage = function setPercentage(p){
         circ1[0].className = 'circularProgress --' + p;
-        circ1[1].className = 'circularProgress --' + p;
-        textElement.text(p+'%');
+        circ1[1].className = 'circularProgress --' + (100-p);
+        textElement.eq(0).text(p+'%');
+        textElement.eq(1).text(100-p+'%');
     };
-    window.setPercentage(25);
+    window.setPercentage(50);
 
     var oscPort = new osc.WebSocketPort({
         url: "ws://localhost:8081"
@@ -20,6 +21,11 @@ $(function () {
     });
 });
 
+Number.prototype.toFixedDown = function(digits) {
+    var re = new RegExp("(\\d+\\.\\d{" + digits + "})(\\d)"),
+        m = this.toString().match(re);
+    return m ? parseFloat(m[1]) : this.valueOf();
+};
 
 var canvas;
 
@@ -27,9 +33,9 @@ var maxParticles, particleBreakDistance;
 var particleCountSlider, lineDistanceSlider, speedSlider;
 var particles = [];
 
-var mAlphaAbs = 0.01, mBetaAbs = 0.01, mDeltaAbs = 0.01, mThetaAbs = 0.01, mGammaAbs = 0.01, mAbs;
+var mAlphaAbs = 0.01, mBetaAbs = 0.01, mDeltaAbs = 0.01, mThetaAbs = 0.01, mGammaAbs = 0.01, mAcc = [0,0,0], mAbs;
 
-var head;
+var head, touching = 0;
 
 function setData(msg){
     switch (msg.address){
@@ -48,6 +54,11 @@ function setData(msg){
         case ('/muse/elements/theta_absolute'):
             mThetaAbs = msg.args[0];
             break;
+        case ('/muse/elements/touching_forehead'):
+            touching = msg.args[0];
+        case ('/muse/acc'):
+            mAcc = msg.args;
+            break;
         default :
             break;
     }
@@ -58,20 +69,20 @@ function setup() {
 
     console.log("Canvas Size :" + width + "x" + height);
     canvas.parent('mainCanvas');
-    frameRate(60);
+    frameRate(30);
     strokeWeight(2);
     stroke(255);
 
     maxParticles = 1;
 
-    particleCountSlider = createSlider(10, 200, 100);
-    particleCountSlider.position(20, 20);
-
-    lineDistanceSlider = createSlider(5, 25, 15);
-    lineDistanceSlider.position(20, 60);
-
-    speedSlider = createSlider(-100, 200, 0);
-    speedSlider.position(20, 100);
+    // particleCountSlider = createSlider(10, 200, 100);
+    // particleCountSlider.position(20, 20);
+    //
+    // lineDistanceSlider = createSlider(5, 25, 15);
+    // lineDistanceSlider.position(20, 60);
+    //
+    // speedSlider = createSlider(-100, 200, 0);
+    // speedSlider.position(20, 100);
 }
 function preload() {
     head = loadModel('assets/head.obj');
@@ -96,8 +107,8 @@ function drawParticles() {
             var dist = posi.dist(posj);
             if (dist <= particleBreakDistance) {
                 strokeWeight(2-(dist/particleBreakDistance));
-                stroke(100*(posi.x/width), 90, 90, 255 - 255*dist/particleBreakDistance );
-                //stroke(200,200,200);
+                //stroke(100*(posi.x/width), 90, 90, 255 - 255*dist/particleBreakDistance );
+                stroke(200,200,200);
                 line(posi.x, posi.y, posj.x, posj.y);
             }
         }
@@ -152,7 +163,7 @@ function drawParticles() {
 
 }
 function draw() {
-    background(0,136,210);
+    background(0,153,218);
 
     //rotateX(mouseY/100);
     //rotateY(mouseX/100);
@@ -162,33 +173,25 @@ function draw() {
     // text("speedSlider", speedSlider.x * 2 + speedSlider.width, 105);
 
     //console.log(speedSlider.value() * .01);
-    mAbs = (mAlphaAbs + mBetaAbs + mDeltaAbs + mGammaAbs + mThetaAbs) / 5;
-
-    // console.log(mAbs);
-    // console.log(mAlphaAbs);
-    // console.log(mBetaAbs);
-    // console.log(mDeltaAbs);
-    // console.log(mGammaAbs);
-    // console.log(mThetaAbs);
-
 
     translate(-width/2,-height/2,0);
 
 
-    loadParticles();
-    drawParticles();
-    particleBreakDistance = max(width, height) / map(mAbs, -0.4, 0.8, 5, 25);
-    //console.log(map(mAbs, -0.4, 0.8, 5, 25));
+    // loadParticles();
+    // drawParticles();
+    //particleBreakDistance = max(width, height) / map(mAbs, -0.4, 0.8, 5, 25);
 
-
-    translate(width/2,height/2+50,0);
-    // var xLimit = constrain(mouseY/100,-7,7);
-    // // console.log(xLimit);
-    // var yLimit = constrain(mouseX/100, -90, 90);
-    // console.log(yLimit);
-
-    rotateY(millis() / 1000);
-    //rotateY(yLimit);
+    if (millis() % 10 == 0) {
+        mAbs = (mAlphaAbs + mBetaAbs + mDeltaAbs + mGammaAbs + mThetaAbs) / 5;
+        console.log(mAbs);
+    }
+    translate(width / 2, height / 2 + 50, 0);
+    if (touching == 1) {
+        var limAX = constrain(mAcc[0], -.5, .5);
+        rotateX(radians(map(limAX, -.5, .5, 45, -45)));
+        var limAZ = constrain(mAcc[1], -.3, .3);
+        rotateZ(radians(map(limAZ, -.3, .3, -25, 25)));
+    }
     scale(260);
-    model(head);
+   model(head);
 }

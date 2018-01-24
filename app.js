@@ -90,7 +90,7 @@ var udpPort = new osc.UDPPort({
     localPort: 5002
 });
 udpPort.on("message", function (oscMessage) {
-    console.log(oscMessage);
+    fitlterMsg(oscMessage);
 });
 udpPort.on("ready", function () {
     var ipAddresses = getIPAddresses();
@@ -120,5 +120,65 @@ wss.on("connection", function (socket) {
      console.log(socketPort);
     var relay = new osc.Relay(udpPort, socketPort, {
         raw: true
+    });
+});
+
+var mAlphaAbs = 0.01, mBetaAbs = 0.01, mDeltaAbs = 0.01, mThetaAbs = 0.01, mGammaAbs = 0.01, mAbs;
+function fitlterMsg(msg){
+    console.log(msg);
+
+    switch (msg.address){
+        case ('/muse/elements/alpha_absolute'):
+            mAlphaAbs = msg.args[0];
+            break;
+        case ('/muse/elements/beta_absolute'):
+            mBetaAbs = msg.args[0];
+            break;
+        case ('/muse/elements/delta_absolute'):
+            mDeltaAbs = msg.args[0];
+            break;
+        case ('/muse/elements/gamma_absolute'):
+            mGammaAbs = msg.args[0];
+            break;
+        case ('/muse/elements/theta_absolute'):
+            mThetaAbs = msg.args[0];
+            break;
+        case ('/muse/acc'):
+            mAcc = msg.args;
+            break;
+        default :
+            break;
+    }
+
+    mAbs = (mAlphaAbs + mBetaAbs + mDeltaAbs + mGammaAbs + mThetaAbs) / 5;
+    console.log(mAbs);
+    // console.log(mAlphaAbs);
+    // console.log(mBetaAbs);
+    // console.log(mDeltaAbs);
+    // console.log(mGammaAbs);
+    // console.log(mThetaAbs);
+}
+
+
+
+pixel = require("node-pixel");
+five = require("johnny-five");
+
+var board = new five.Board({});
+var strip = null;
+
+board.on("ready", function() {
+
+    strip = new pixel.Strip({
+        board: this,
+        controller: "FIRMATA",
+        strips: [ {pin: 6, length: 42}, ], // this is preferred form for definition
+        gamma: 2.8, // set to a gamma that works nicely for WS2812
+    });
+
+    strip.on("ready", function() {
+        // do stuff with the strip here.
+        strip.color("#ff0000");
+        strip.show();
     });
 });
