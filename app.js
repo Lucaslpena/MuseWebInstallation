@@ -1,72 +1,10 @@
-// var http = require('http');
-// var fs = require('fs');
-//
-// function onRequest(request, response){
-//     response.writeHead(200, {'Content-Type': 'text/html'});
-//     fs.readFile('./dist/index.html', null, function(error, data) {
-//       if (error) {
-//         response.writeHead(404);
-//         response.write('File not found!!');
-//       } else {
-//         response.write(data);
-//       }
-//         response.end();
-//     });
-// }
-// http.createServer(onRequest).listen(3000);
-/** --Connection To OSC is confirmed--
-// var osc = require("osc");
-// var getIPAddresses = function () {
-//     var os = require("os"),
-//         interfaces = os.networkInterfaces(),
-//         ipAddresses = [];
-//
-//     for (var deviceName in interfaces) {
-//         var addresses = interfaces[deviceName];
-//         for (var i = 0; i < addresses.length; i++) {
-//             var addressInfo = addresses[i];
-//             if (addressInfo.family === "IPv4" && !addressInfo.internal) {
-//                 ipAddresses.push(addressInfo.address);
-//             }
-//         }
-//     }
-//     return ipAddresses;
-// };
-//
-// var udpPort = new osc.UDPPort({
-//     localAddress: "0.0.0.0",
-//     localPort: 5001
-// });
-//
-// udpPort.on("ready", function () {
-//     var ipAddresses = getIPAddresses();
-//
-//     console.log("Listening for OSC over UDP.");
-//     ipAddresses.forEach(function (address) {
-//         console.log(" Host:", address + ", Port:", udpPort.options.localPort);
-//     });
-// });
-//
-//
-// GLOBAL.window = GLOBAL;
-// udpPort.on("message", function (oscMessage) {
-//     console.log(oscMessage);
-//     GLOBAL = oscMessage;
-// });
-//
-// udpPort.on("error", function (err) {
-//     console.log(err);
-// });
-//
-// udpPort.open();
- **/
-
 var osc = require("osc"),
     express = require("express"),
     WebSocket = require("ws"),
     nodeMuse = require("node-muse"),
-    Muse = nodeMuse.Muse;
-
+    Muse = nodeMuse.Muse,
+    pixel = require("node-pixel"),
+    five = require("johnny-five");
 
 var getIPAddresses = function () {
     var os = require("os"),
@@ -123,9 +61,16 @@ wss.on("connection", function (socket) {
     });
 });
 
-var mAlphaAbs = 0.01, mBetaAbs = 0.01, mDeltaAbs = 0.01, mThetaAbs = 0.01, mGammaAbs = 0.01, mAbs;
+var mAlphaAbs = 0.01,
+    mBetaAbs = 0.01,
+    mDeltaAbs = 0.01,
+    mThetaAbs = 0.01,
+    mGammaAbs = 0.01,
+    mAbs,
+    touching = 0,
+    stateMachine = 1;
 function fitlterMsg(msg){
-    console.log(msg);
+    //console.log(msg);
 
     switch (msg.address){
         case ('/muse/elements/alpha_absolute'):
@@ -143,6 +88,9 @@ function fitlterMsg(msg){
         case ('/muse/elements/theta_absolute'):
             mThetaAbs = msg.args[0];
             break;
+        case ('/muse/elements/touching_forehead'):
+            touching = msg.args[0];
+            break;
         case ('/muse/acc'):
             mAcc = msg.args;
             break;
@@ -151,18 +99,19 @@ function fitlterMsg(msg){
     }
 
     mAbs = (mAlphaAbs + mBetaAbs + mDeltaAbs + mGammaAbs + mThetaAbs) / 5;
-    console.log(mAbs);
+    //console.log(mAbs);
     // console.log(mAlphaAbs);
     // console.log(mBetaAbs);
     // console.log(mDeltaAbs);
     // console.log(mGammaAbs);
     // console.log(mThetaAbs);
+
+    if (touching == 1){
+        stateMachine = 2;
+    }
 }
 
-
-
-pixel = require("node-pixel");
-five = require("johnny-five");
+var fps = 30;
 
 var board = new five.Board({});
 var strip = null;
@@ -177,8 +126,68 @@ board.on("ready", function() {
     });
 
     strip.on("ready", function() {
-        // do stuff with the strip here.
-        strip.color("#ff0000");
-        strip.show();
+        console.log("initializing strip");
+        //strip.color("#ff0000");
+        //strip.show();
+        //dynamicRainbow(fps);
+        stateCheck();
     });
+
+    function stateCheck(){
+        switch (stateMachine){
+            case 2:
+                strip.color("#ff0000");
+                strip.show();
+                break;
+            default:  //idle state
+                dynamicRainbow();
+                break;
+        }
+    }
+
+    function dynamicRainbow(delay){
+        console.log( 'dynamicRainbow' );
+        var showColor;
+        var cwi = 0; // colour wheel index (current position on colour wheel)
+        var foo = setInterval(function(){
+            if (++cwi > 255) {
+                cwi = 0;
+            }
+
+            for(var i = 0; i < strip.length; i++) {
+                showColor = colorWheel( ( cwi+i ) & 255 );
+                strip.pixel( i ).color( showColor );
+            }
+            strip.show();
+            if (stateMachine != 1){
+
+                stateCheck();
+            }
+        }, 1000/delay);
+    }
+
+    // Input a value 0 to 255 to get a color value.
+    // The colors are a transition r - g - b - back to r.
+    function colorWheel( WheelPos ){
+        var r,g,b;
+        WheelPos = 255 - WheelPos;
+
+        if ( WheelPos < 85 ) {
+            r = 255 - WheelPos * 3;
+            g = 0;
+            b = WheelPos * 3;
+        } else if (WheelPos < 170) {
+            WheelPos -= 85;
+            r = 0;
+            g = WheelPos * 3;
+            b = 255 - WheelPos * 3;
+        } else {
+            WheelPos -= 170;
+            r = WheelPos * 3;
+            g = 255 - WheelPos * 3;
+            b = 0;
+        }
+        // returns a string with the rgb value to be used as the parameter
+        return "rgb(" + r +"," + g + "," + b + ")";
+    }
 });
