@@ -3,7 +3,8 @@ To run this with nodemon... sloppy I know but its quick
 ``npm run watch-sass``
 
 with arduino plugged in:
-``$ interchange install git+https://github.com/ajfisher/node-pixel -a uno --firmata ``
+``ls /dev/{tty,cu}.*``
+get and update port in app.js file
 
 ## Stuff that helped
 * [OSC](https://github.com/colinbdclark/osc.js/)

@@ -93,7 +93,7 @@ function draw() {
         console.log(mAbs);
     }
     if (frameCount % 45 == 1) {
-        mod -= .02;
+        //mod -= .02;
     }
 
     translate(0,100,0);
