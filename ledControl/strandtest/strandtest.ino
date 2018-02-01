@@ -52,9 +52,25 @@ void establishContact() {
     delay(300);
   }
 }
+void serialEvent() {
+//  while (Serial.available()) {
+//    // get the new byte:
+//    gotten = Serial.parseInt();
+//   if (gotten == 1000)  {
+//    state = 1;
+//   }
+//  }
+}
 
 void loop() {
-  
+//rainbowCycleState();
+//
+//  if (state == 1){
+//    rainbowCycle(5);
+//  } else {
+//    colorWipe(strip.Color(0,153,218), 50); // Green
+//  }
+ 
   if (Serial.available()) {
     gotten = Serial.parseInt();
 //    if (state == 2){
@@ -66,7 +82,8 @@ void loop() {
     if (gotten == 1000)  {
       state = 1;
       rainbowCycle(5); 
-    } else if( (gotten >= 0) && (gotten =< 79)) {
+      //rainbowCycleState();
+    } else if( (gotten >= 0) && (gotten <= 79)) {
       avg = gotten;
       medidate(5);
     } 
@@ -77,9 +94,13 @@ void loop() {
   }
 }
 
+int lastPush = 0; 
+float lastT = millis();
 void medidate(uint8_t wait) {
+
+  if( (lastPush == 0) || ( (avg < lastPush+10 )  && (avg > lastPush-10 ) ) || (lastT - millis() >= 500)){ lastT = millis(); lastPush = avg; }
   for(uint16_t i=0; i<strip.numPixels(); i++) {
-    if (i < avg ){
+    if (i < lastPush ){
       strip.setPixelColor(i, strip.Color(2,56,82));
       strip_b.setPixelColor(i, strip.Color(2,56,82));
     } else { 
@@ -105,6 +126,7 @@ void rainbowCycle(uint8_t wait) {
     delay(wait);
   }
 }
+
 void checkUp(){
   if ((state != 2) && (Serial.available()) ) {
     gotten = Serial.parseInt();

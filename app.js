@@ -98,7 +98,7 @@ function fitlterMsg(msg){
             break;
     }
 
-    mAbs = (mAlphaAbs + mBetaAbs + mDeltaAbs + mGammaAbs + mThetaAbs) / 5;
+    mAbs = (mDeltaAbs)/1;
     //console.log(mAbs);
     // console.log(mAlphaAbs);
     // console.log(mBetaAbs);
@@ -119,15 +119,15 @@ function stateCheck(){
     switch (stateMachine){
         case 2:
 
-            var adjustedmAbs = constrain_range(mAbs, -1, 1);
-            var limit = Math.round(map_range(adjustedmAbs, -1, 1, 0, 79));
-            // if( (lastPush == 0) || ( (limit < lastPush+8 )  && (limit > lastPush-8 ) ) ){
-            //     lastPush = limit;
+            console.log(mAbs);
+            var adjustedmAbs = constrain_range(mAbs, .2, 1.7);
+            var limit = Math.round(map_range(adjustedmAbs, .2, 1.7, 0, 79));
+            if( (lastPush == 0) || ( (limit < lastPush+20 )  && (limit > lastPush-20 ) ) ){
+                lastPush = limit;
                 arduinoHeadsetOn(limit);
-
-            // } else {
-            //     arduinoHeadsetOn(lastPush);
-            // }
+            } else {
+                arduinoHeadsetOn(lastPush);
+            }
             break;
         default:
             arduinoHeadsetOff();

@@ -77,8 +77,8 @@ function setup() {
     stroke(255);
 }
 function preload() {
-    head = loadModel('assets/HeadPlanes_Simple_High.obj');
-    //head = loadModel('assets/HeadPlanes_Simple_Low.obj');
+    //head = loadModel('assets/HeadPlanes_Simple_High.obj');
+    head = loadModel('assets/HeadPlanes_Simple_Low.obj');
 }
 function draw() {
     ambientLight(157,173,183);
@@ -88,7 +88,7 @@ function draw() {
     background(0,153,218);
 
     if (frameCount % 15 == 1) {
-        mAbs = (mAlphaAbs + mBetaAbs + mDeltaAbs + mGammaAbs + mThetaAbs) / 5;
+        mAbs = (mDeltaAbs);
         console.log("abs: ");
         console.log(mAbs);
     }
@@ -103,7 +103,7 @@ function draw() {
         headMotion();
         var modAbs = mAbs + mod;
         console.log(modAbs);
-        var mappedEEG = map(constrain(modAbs, -1.5, 1.5), -1.5, 1.5, 0, 100);
+        var mappedEEG = map(constrain(modAbs, .2, 1.7), -.2, 1.7, 0, 100);
         setPercentage(Math.floor(mappedEEG));
     } else {
         mod = 0;

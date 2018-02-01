@@ -257,6 +257,13 @@ canvas {
     background-image: linear-gradient(90deg, #FFE700 50%, transparent 50%, transparent), linear-gradient(270deg, #FFE700 50%, #9dadb7 50%, #9dadb7); }
 
 .logo {
-  background-image: img("../assets/MS_logo_CBlue.jpg"); }
+  background-image: url("../assets/MS_logo_CBlue.jpg");
+  top: 501px;
+  position: absolute;
+  height: 163px;
+  width: 100vw;
+  background-position: center center;
+  background-size: contain;
+  background-repeat: no-repeat; }
 
 /*# sourceMappingURL=app.css.map */
