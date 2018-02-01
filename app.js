@@ -27,9 +27,9 @@ var udpPort = new osc.UDPPort({
     localAddress: "0.0.0.0",
     localPort: 5002
 });
-udpPort.on("message", function (oscMessage) {
-    fitlterMsg(oscMessage);
-});
+// udpPort.on("message", function (oscMessage) {
+//     fitlterMsg(oscMessage);
+// });
 udpPort.on("ready", function () {
     var ipAddresses = getIPAddresses();
     console.log("Listening for OSC over UDP.");
@@ -66,12 +66,11 @@ var mAlphaAbs = 0.01,
     mDeltaAbs = 0.01,
     mThetaAbs = 0.01,
     mGammaAbs = 0.01,
-    mAbs,
+    mAbs = 0.01,
     touching = 0,
     stateMachine = 1;
 function fitlterMsg(msg){
     //console.log(msg);
-
     switch (msg.address){
         case ('/muse/elements/alpha_absolute'):
             mAlphaAbs = msg.args[0];
@@ -107,64 +106,167 @@ function fitlterMsg(msg){
     // console.log(mThetaAbs);
 
     if (touching == 1){
-        stateMachine = 2;
+        stateMachine = 2;git
     }
 }
 
-var fps = 30;
+var fps = 60;
 
 var board = new five.Board({});
 var strip = null;
+var strip_length = 20;
 
 board.on("ready", function() {
 
     strip = new pixel.Strip({
         board: this,
         controller: "FIRMATA",
-        strips: [ {pin: 6, length: 42}, ], // this is preferred form for definition
+       strips: [ {pin: 6, length: strip_length}, {pin: 3, length: strip_length}  ], // this is preferred form for definition
+        //strips: [ {pin: 6, length: strip_length} ], // this is preferred form for definition
         gamma: 2.8, // set to a gamma that works nicely for WS2812
     });
 
+    // strip_top = new pixel.Strip({
+    //     board: this,
+    //     controller: "FIRMATA",
+    //     strips: [ {pin: 3, length: 79}, ], // this is preferred form for definition
+    //     gamma: 2.8, // set to a gamma that works nicely for WS2812
+    // });
+
+
     strip.on("ready", function() {
-        console.log("initializing strip");
-        //strip.color("#ff0000");
-        //strip.show();
-        //dynamicRainbow(fps);
+        strip.show("#000000");
+        console.log("Strip ready");
+        console.log(strip.length);
         stateCheck();
     });
+
+    function flasher(){
+        var colors = ["red", "green", "blue"];
+        var current_colors = [0,1,2];
+        var pixel_list = [0,1,2];
+        var blinker = setInterval(function() {
+            if (stateMachine != 1){
+                stateCheck();
+            }
+
+            strip.color("#000"); // blanks it out
+            for (var i=0; i< pixel_list.length; i++) {
+                if (++pixel_list[i] >= strip.length) {
+                    pixel_list[i] = 0;
+                    if (++current_colors[i] >= colors.length) current_colors[i] = 0;
+                }
+                strip.pixel(pixel_list[i]).color(colors[current_colors[i]]);
+            }
+
+            strip.show();
+        }, 1000/fps);
+    }
+
+
+    // strip.on("ready", function() {
+    //     console.log("initializing strip");
+    //     //strip.color("#ff0000");
+    //     //strip.show();
+    //     //dynamicRainbow(fps);
+    //     stateCheck();
+    // });
+    // strip_top.on("ready", function() {
+    //     console.log("initializing strip");
+    //     strip.color("#00ff00");
+    //     strip.show();
+    //     //dynamicRainbow(fps);
+    //     // stateCheck();
+    // });
+
 
     function stateCheck(){
         switch (stateMachine){
             case 2:
-                strip.color("#ff0000");
-                strip.show();
+                console.log("currently on head");
+                meditation();
                 break;
             default:  //idle state
-                dynamicRainbow();
+                dynamicRainbow(800);
+                //flasher();
                 break;
         }
     }
 
-    function dynamicRainbow(delay){
+    function meditation(){
+        var colors = ["red", "green", "blue"];
+        var current_colors = [0,1,2];
+        var pixel_list = [0,1,2];
+        var faker = 0;
+        var timer = Date.now();
+        var blinker = setInterval(function() {
+
+            // strip.color("#023852"); // blanks it out
+            // for (var i=0; i< pixel_list.length; i++) {
+            //     if (++pixel_list[i] >= strip.length) {
+            //         pixel_list[i] = 0;
+            //         if (++current_colors[i] >= colors.length) current_colors[i] = 0;
+            //     }
+            //     strip.pixel(pixel_list[i]).color(colors[current_colors[i]]);
+            // }
+
+            if (stateMachine != 2){
+                stateCheck();
+            }
+
+            var adjustedmAbs = constrain_range(mAbs + faker, -1, 1);
+
+            if ((Date.now() - timer) > 1500) {
+                timer = Date.now();
+                //faker -= 0.01;
+            }
+
+
+            //console.log(strip.length);
+
+            console.log(adjustedmAbs);
+            var limit = map_range(adjustedmAbs, -1, 1, 0, strip.length);
+            console.log(limit);
+            strip.color("#023852");
+            for (var i = 0; i < parseInt(limit); i++){
+                strip.color("#023852");
+
+                strip.pixel(i).color("#FFE700");
+            }
+            for (var j = 0; parseInt(limit) < strip.length; j++){
+                strip.pixel(i).color("#FFE700");
+            }
+
+            strip.show();
+
+        }, 1000/fps);
+
+    }
+
+
+    function dynamicRainbow(){
         console.log( 'dynamicRainbow' );
+
         var showColor;
         var cwi = 0; // colour wheel index (current position on colour wheel)
         var foo = setInterval(function(){
-            if (++cwi > 255) {
+            // if (stateMachine != 1){
+            //     stateCheck();
+            // }
+            if (++cwi >= 255) {
                 cwi = 0;
             }
 
             for(var i = 0; i < strip.length; i++) {
                 showColor = colorWheel( ( cwi+i ) & 255 );
                 strip.pixel( i ).color( showColor );
+                //strip.pixel( i+ strip.length/2 ).color( showColor );
             }
             strip.show();
-            if (stateMachine != 1){
 
-                stateCheck();
-            }
-        }, 1000/delay);
+        }, 1000/60);
     }
+
 
     // Input a value 0 to 255 to get a color value.
     // The colors are a transition r - g - b - back to r.
@@ -191,3 +293,10 @@ board.on("ready", function() {
         return "rgb(" + r +"," + g + "," + b + ")";
     }
 });
+
+function map_range(value, low1, high1, low2, high2) {
+    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+}
+function constrain_range(number, low, high){
+    return Math.min(Math.max(parseFloat(number), low), high);
+}
