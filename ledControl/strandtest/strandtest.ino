@@ -66,7 +66,7 @@ void loop() {
     if (gotten == 1000)  {
       state = 1;
       rainbowCycle(5); 
-    } else if( (gotten >= 0) && (gotten < 79)) {
+    } else if( (gotten >= 0) && (gotten =< 79)) {
       avg = gotten;
       medidate(5);
     } 

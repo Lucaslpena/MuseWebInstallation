@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e21ca8a-1904-42d8-b2a3-73b71b9b53d7" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist/js/main.js" afterPath="$PROJECT_DIR$/dist/js/main.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ledControl/strandtest/strandtest.ino" afterPath="$PROJECT_DIR$/ledControl/strandtest/strandtest.ino" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/readme.md" afterPath="$PROJECT_DIR$/readme.md" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -1030,12 +1026,12 @@
       <workItem from="1517412573973" duration="575000" />
       <workItem from="1517413517755" duration="1247000" />
       <workItem from="1517477779981" duration="7967000" />
-      <workItem from="1517487700397" duration="7968000" />
+      <workItem from="1517487700397" duration="9173000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="97980000" />
+    <option name="totallyTimeSpent" value="99185000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="461" y="-1440" width="2560" height="1440" extended-state="0" />
