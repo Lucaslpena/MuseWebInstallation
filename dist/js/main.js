@@ -88,7 +88,7 @@ function draw() {
     background(0,153,218);
 
     if (frameCount % 15 == 1) {
-        mAbs = (mDeltaAbs);
+        mAbs = (mDeltaAbs);                 //<<<<<<<<<<< DELTA WAVES
         console.log("abs: ");
         console.log(mAbs);
     }
@@ -103,7 +103,7 @@ function draw() {
         headMotion();
         var modAbs = mAbs + mod;
         console.log(modAbs);
-        var mappedEEG = map(constrain(modAbs, .2, 1.7), -.2, 1.7, 0, 100);
+        var mappedEEG = map(constrain(modAbs, 0, 1.7), 0, 1.7, 0, 100);
         setPercentage(Math.floor(mappedEEG));
     } else {
         mod = 0;

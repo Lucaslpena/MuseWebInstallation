@@ -114,23 +114,18 @@ function fitlterMsg(msg){
     stateCheck();
 }
 
-var lastPush = 0;
+
 function stateCheck(){
     switch (stateMachine){
         case 2:
-
             console.log(mAbs);
-            var adjustedmAbs = constrain_range(mAbs, .2, 1.7);
-            var limit = Math.round(map_range(adjustedmAbs, .2, 1.7, 0, 79));
-            if( (lastPush == 0) || ( (limit < lastPush+20 )  && (limit > lastPush-20 ) ) ){
-                lastPush = limit;
-                arduinoHeadsetOn(limit);
-            } else {
-                arduinoHeadsetOn(lastPush);
-            }
+            var adjustedmAbs = constrain_range(mAbs, 0, 1.7);
+            var limit = Math.round(map_range(adjustedmAbs, 0, 1.7, 0, 79));
+            arduinoHeadsetOn(limit);
             break;
         default:
             arduinoHeadsetOff();
+            state = 0;
             break;
     }
 }
@@ -155,8 +150,8 @@ port.on('error', function(err) {
 // });
 port.on('data', function (data) {
     console.log('Data:', data);
-    //arduinoHeadsetOff();
-    arduinoHeadsetOn(50);
+    arduinoHeadsetOff();
+    //arduinoHeadsetOn(50);
 });
 
 port.on("open", function () {
