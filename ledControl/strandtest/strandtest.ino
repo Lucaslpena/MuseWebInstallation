@@ -14,14 +14,10 @@ int state = 0; // 0 = idle, 1 = changing up; 2 = headset on; 3 changing down;
 unsigned long previousMillis = millis();
 unsigned long previousMillis2 = millis();
 unsigned long timeOn = millis();
-
-int winning = 35;
-
-
+int winning = 45;
 boolean newUser = true;
-
 int lastPush = 0;
-int j;
+int j, keepOn;
 
 void setup() {
   Serial.begin(9600);
@@ -35,7 +31,6 @@ void setup() {
 
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
-  
   strip_b.begin();
   strip_b.show();
 
@@ -45,6 +40,7 @@ void setup() {
   }
   establishContact();
   j = 0;
+  keepOn = false;
 }
 void establishContact() {
   if (Serial.available() <= 0) {
@@ -53,13 +49,17 @@ void establishContact() {
   }
 }
 void loop() {
+//  if (keepOn == true){
+//    state = 1;
+//  }
   if (Serial.available()) {
     checkNow();
-    if( (state == 2) && ( (gotten >= 0) && (gotten <= 79)) ){
+    if( (state == 2) && ( (gotten >= 0) && (gotten <= 79)) && (keepOn == false)){
       avg = gotten;
       medidate(5);
     }
-   else if( (gotten == 1000) || (state == 1) ){
+   else if( (gotten == 1000) || (state == 1) || (keepOn == true) ){
+      //change keep on?
       newUser = true;
       state = 1;
       rainbowCycle(5); 
@@ -85,8 +85,7 @@ void medidate(uint8_t wait) {
   if((currentMillis - timeOn >= 5000) && ((lastPush <= winning) && (lastPush > 0))){ //if end
     state = 1;
     avg = 0;
-    colorWipe(strip.Color(0, 255, 0), 36); // Blue
-    theaterChaseRainbow(50);
+    winningAnimation();
   } else if (state != 1) {
     if (newUser == true){
       newUser = false;
@@ -107,70 +106,35 @@ void medidate(uint8_t wait) {
   checkNow();
 }
 
-// Slightly different, this makes the rainbow equally distributed throughout
-
 void rainbowCycle(uint8_t wait) {
   newUser = true;
   uint16_t i;//, j;
-//  for(j=0; j<256; j++) { // 1 cycle of all colors on wheel
-//    for(i=0; i< strip.numPixels(); i++) {
-//      strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
-//      strip_b.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
-//    }
-//    if (j%100 == 1){
-//      checkUp();
-//    }
-//    strip_b.show();
-//    strip.show();
-//  }
-
-
-//  
-//  for(i=0; i< strip.numPixels(); i++) {
-//    strip.setPixelColor(i,strip.Color(255,0,0));
-//    strip_b.setPixelColor(i,strip.Color(255,0,0));
-//  }
-//    strip_b.show();
-//    strip.show();
-//
-//    checkUp();
-
-
-  for (uint16_t k=0; k< 8; k++) {
+  for (uint16_t k=0; k< 6; k++) {
     for(i=0; i< strip.numPixels(); i++) {
         strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
         strip_b.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
       }
-     j+=1;
+     j+=2;
      if (j>=256){
       j = 0;
      }
   }
-
    strip_b.show();
    strip.show();
-
-//   j+=20;
-//   if (j>=256){
-//    j = 0;
-//   }
    checkUp();
 }
 
 void checkNow(){
   gotten = Serial.parseInt();
 }
-//void serialEvent() {
-//  while (Serial.available()) {
-//    checkNow();
-//  }
-//}
 
 void checkUp(){
   checkNow();
   if ( (gotten > 0) && (gotten <= 79) ){
     state = 2;
     timeOn = millis();
+  } else if (gotten == 1000){
+    keepOn = false;
   }
 }
 // Input a value 0 to 255 to get a color value.
@@ -196,42 +160,37 @@ void colorWipe(uint32_t c, uint8_t wait) {
     delay(wait);
   }
 }
-//Theatre-style crawling lights with rainbow effect
-void theaterChaseRainbow(uint8_t wait) {
-  for (int j=0; j < 256; j=j+8) {     // cycle all 256 colors in the wheel
-    for (int q=0; q < 3; q++) {
-      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
-        strip.setPixelColor(i+q, Wheel( (i+j) % 255));    //turn every third pixel on
-        strip_b.setPixelColor(i+q, Wheel( (i+j) % 255));
-      }
-      strip.show();
-      strip_b.show();
-
-      delay(wait);
-
-      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
-        strip.setPixelColor(i+q, 0);        //turn every third pixel off
-        strip_b.setPixelColor(i+q, 0);
-      }
+void winningAnimation() {
+  keepOn = true;
+  colorWipe(strip.Color(255,231,0), 20); // yellow
+  colorWipe(strip.Color(0, 255, 0), 36); // Green
+    for (uint16_t i=0; i < strip.numPixels(); i++) {
+      strip.setPixelColor(i, strip.Color(0, 255, 0));
+      strip_b.setPixelColor(i,strip.Color(0, 255, 0));
     }
-  }
+    strip.show();
+    strip_b.show();
+    delay(1000);
+    for (uint16_t i=0; i < strip.numPixels(); i++) {
+      strip.setPixelColor(i, strip.Color(255, 255,255));
+      strip_b.setPixelColor(i,strip.Color(255, 255,255));
+    }
+    strip.show();
+    strip_b.show();
+    delay(1000);
+    for (uint16_t i=0; i < strip.numPixels(); i++) {
+      strip.setPixelColor(i, strip.Color(0, 255, 0));
+      strip_b.setPixelColor(i,strip.Color(0, 255, 0));
+    }
+    strip.show();
+    strip_b.show();
+    delay(1000);
+    for (uint16_t i=0; i < strip.numPixels(); i++) {
+      strip.setPixelColor(i, strip.Color(255, 255,255));
+      strip_b.setPixelColor(i,strip.Color(255, 255,255));
+    }
+    strip.show();
+    strip_b.show();
+    delay(1000);
 }
 
-void theaterChase(uint32_t c, uint8_t wait) {
-  for (int j=0; j<10; j++) {  //do 10 cycles of chasing
-    for (int q=0; q < 3; q++) {
-      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
-        strip.setPixelColor(i+q, c);    //turn every third pixel on
-        strip_b.setPixelColor(i+q, c);    //turn every third pixel on
-      }
-      strip.show();
-      strip_b.show();
-      delay(wait);
-
-      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
-        strip.setPixelColor(i+q, 0);        //turn every third pixel off
-        strip_b.setPixelColor(i+q, 0);        //turn every third pixel off
-      }
-    }
-  }
-}
