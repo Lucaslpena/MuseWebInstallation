@@ -235,13 +235,19 @@ $half: round($loops / 2);
 }
 
 .logo{
-  background-image: url('../assets/MS_logo_CBlue.jpg');
   top: 501px;
   position: absolute;
   height: 163px;
   width: 100vw;
-  background-position: center center;
-  background-size: contain;
-  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.label{
+  margin-top: 170px;
+  display: flex;
+  justify-content: center;
+  color: $ms_navy;
+  font-size: 32px;
 }
 
