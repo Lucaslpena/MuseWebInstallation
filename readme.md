@@ -10,4 +10,5 @@ get and update port in app.js file
 * [OSC](https://github.com/colinbdclark/osc.js/)
 * [Muse-js](https://github.com/urish/muse-js)
 * [Muse Documentation](http://developer.choosemuse.com/research-tools/available-data)
+* [Serial Node](https://github.com/node-serialport/node-serialport)
 

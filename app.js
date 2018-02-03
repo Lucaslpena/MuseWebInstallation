@@ -111,8 +111,11 @@ function fitlterMsg(msg){
     } else {
         stateMachine = 1;
     }
-    stateCheck();
 }
+
+setInterval(function(){
+    stateCheck(); 
+}, 1000/60); //framerate for arduino
 
 
 function stateCheck(){
