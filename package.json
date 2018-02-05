@@ -4,9 +4,6 @@
   "description": "used for milestone conference with muse",
   "main": "app.js",
   "dependencies": {
-    "@angular/animations": "^5.2.3",
-    "@angular/cdk": "^5.1.1",
-    "@angular/material": "^5.1.1",
     "express": "^4.16.2",
     "johnny-five": "^0.13.0",
     "node-fadecandy": "^2.0.1",
