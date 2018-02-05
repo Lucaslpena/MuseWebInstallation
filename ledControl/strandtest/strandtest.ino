@@ -165,29 +165,29 @@ void winningAnimation() {
   colorWipe(strip.Color(255,231,0), 20); // yellow
   colorWipe(strip.Color(0, 255, 0), 36); // Green
     for (uint16_t i=0; i < strip.numPixels(); i++) {
-      strip.setPixelColor(i, strip.Color(0, 255, 0));
-      strip_b.setPixelColor(i,strip.Color(0, 255, 0));
+      strip.setPixelColor(i, strip.Color(0,153,218));
+      strip_b.setPixelColor(i, strip.Color(0,153,218));
     }
     strip.show();
     strip_b.show();
     delay(1000);
     for (uint16_t i=0; i < strip.numPixels(); i++) {
-      strip.setPixelColor(i, strip.Color(255, 255,255));
-      strip_b.setPixelColor(i,strip.Color(255, 255,255));
+      strip.setPixelColor(i, strip.Color(255,231,0));
+      strip_b.setPixelColor(i, strip.Color(255,231,0));
     }
     strip.show();
     strip_b.show();
     delay(1000);
     for (uint16_t i=0; i < strip.numPixels(); i++) {
-      strip.setPixelColor(i, strip.Color(0, 255, 0));
-      strip_b.setPixelColor(i,strip.Color(0, 255, 0));
+      strip.setPixelColor(i, strip.Color(0,153,218));
+      strip_b.setPixelColor(i, strip.Color(0,153,218));
     }
     strip.show();
     strip_b.show();
     delay(1000);
     for (uint16_t i=0; i < strip.numPixels(); i++) {
-      strip.setPixelColor(i, strip.Color(255, 255,255));
-      strip_b.setPixelColor(i,strip.Color(255, 255,255));
+     strip.setPixelColor(i, strip.Color(255,231,0));
+      strip_b.setPixelColor(i, strip.Color(255,231,0));
     }
     strip.show();
     strip_b.show();
