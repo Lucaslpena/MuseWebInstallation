@@ -1,6 +1,7 @@
 body{
   margin:0;
   font-family: 'Open Sans', sans-serif;
+  overflow: hidden;
 }
 canvas{
   display: block;
@@ -9,6 +10,7 @@ canvas{
 
 /* main */
 .overlay-content{
+  box-sizing: border-box;
   position: absolute;
   top: 0;
   left: 0;

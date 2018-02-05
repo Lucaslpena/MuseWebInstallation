@@ -88,8 +88,8 @@ function setup() {
 }
 function preload() {
     //head = loadModel('assets/HeadPlanes_Simple_High.obj');
-    head = loadModel('assets/HeadPlanes_Simple_High2.obj');
-    //head = loadModel('assets/HeadPlanes_Simple_Low.obj');
+    //head = loadModel('assets/HeadPlanes_Simple_High2.obj');
+    head = loadModel('assets/HeadPlanes_Simple_Low.obj');
 }
 function draw() {
     ambientLight(157,173,183);
