@@ -1,135 +1,3 @@
-// csstyle v1.1.0
-// Clean, Simple Styling for the Web
-// http://www.csstyle.io
-// Copyright (c) 2014 Dave Geddes
-// https://twitter.com/geddski
-// https://github.com/geddski
-
-/*
-  Note:
-  This is a modified version of the mixin set.
-  Mixin "modifier" was originally "option", and mixin "child" was originally "part".
-*/
-
-// components
-@mixin component($name) {
-  .#{$name} {
-    @content
-  }
-}
-
-// modifiers
-// override components
-@mixin modifier($name) {
-  &.\--#{"" + $name} {
-    @content;
-  }
-}
-
-// allow childs to respond to modifiers on parents
-@mixin whenComponentModifier($modifier) {
-  $index: str-index(unquote("#{&}"), "__") - 1;
-  $component: str-slice(#{&}, 0, $index);
-
-  #{$component}.\--#{$modifier} & {
-    @content;
-  }
-}
-
-// childs
-// make up the structure of a component
-// override components
-@mixin child($name) {
-  // check if nested in an modifier
-  $modifierIndex: str-index(unquote("#{&}"), ".\\--");
-  $modifierIndex: 0 !default;
-  $modifierIndex: $modifierIndex - 1;
-
-  // check if nested in another child
-  $childIndex: str-index(unquote("#{&}"), "__");
-  $childIndex: 0 !default;
-  $childIndex: $childIndex - 1;
-
-  $component: str-slice(unquote("#{&}"), 0, $modifierIndex);
-
-  // child is nested in an modifier
-  @if $modifierIndex > 0 {
-    // child is also nested in another child
-    @if ($childIndex > 0) {
-      &__#{"" + $name} {
-        @content;
-      }
-    } @else {
-      & #{$component}__#{"" + $name} {
-        @content;
-      }
-    }
-  } @else {
-    &__#{"" + $name} {
-      @content
-    }
-  }
-}
-
-// tweaks
-// override components, modifiers, and modifiers
-@mixin tweak($name) {
-  .\+#{"" + $name} {
-    @content;
-  }
-}
-
-// locations
-// override components, childs, modifiers, and tweaks
-@mixin location($name) {
-  .\@#{"" + $name} {
-    @content;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 body{
   margin:0;
   font-family: 'Open Sans', sans-serif;
@@ -149,12 +17,15 @@ canvas{
   display: flex;
   align-content: center;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  padding-top: 50px;
   .centered{
-    display: flex;
     display: flex;
     width: 800px;
     justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
   }
 }
 
@@ -163,79 +34,26 @@ $ms_yellow: #FFE700;
 $ms_navy: #023852;
 $ms_grey: #9dadb7;
 
-/* circular */
-$backgroundBarColor: $ms_grey;
-//$successBarColor: #2ecc71;
-//$warningBarColor: #f39c12;
-//$dangerBarColor: #e74c3c;
-
-$successBarColor: $ms_yellow;
-$warningBarColor: #f39c12;
-$dangerBarColor: #e74c3c;
-
-$overlayColor: #ddd;
-$backColor: #f2f2f2;
-$barHeight: 33px;
-$elementSize: 200px;
-
-
-$step: 1; // step of % (100/$step = number of created classes)
-$loops: round(100 / $step);
-$increment: 360 / $loops;
-$half: round($loops / 2);
-
-@include component(circularProgress) {
-  float: left;
-  margin-right: 20px;
-  margin-bottom: 20px;
-  position: relative;
-  width: $elementSize;
-  height: $elementSize;
-  border-radius: 50%;
-  border: px solid $backColor; // remove gradient color
-  background-color: $backgroundBarColor; // default 100%
-
-  @include child(range) {
-    margin-top: $elementSize + 20;
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
   }
-
-  // Text overlay element
-  @include child(overlay) {
-    position: absolute;
-    width: $elementSize - $barHeight;
-    height: $elementSize - $barHeight;
-    background-color: $ms_blue;
-    border-radius: 50%;
-    margin-left: $barHeight/2;
-    margin-top: $barHeight/2;
-    text-align: center;
-    line-height: $elementSize - $barHeight;
-    color: $ms_navy;
-    font-size: 50px;
+  100% {
+    opacity: 1;
   }
-
-  // Loop for creating modifier classes
-  @for $i from 0 through $loops {
-
-    $barColor: $successBarColor;
-    @if $i <= 66 { $barColor: $warningBarColor; }
-    @if $i <= 33 { $barColor: $dangerBarColor; }
-
-    @include modifier(#{$i*$step}) {
-
-      @if $i < $half {
-        $nextdeg: 90deg + ( $increment * $i );
-        background-image: linear-gradient(90deg, $backgroundBarColor 50%, transparent 50%, transparent), linear-gradient($nextdeg, $barColor 50%, $backgroundBarColor 50%, $backgroundBarColor);
-      } @else {
-        $nextdeg: -90deg + ( $increment * ( $i - $half ) );
-        background-image: linear-gradient($nextdeg, $barColor 50%, transparent 50%, transparent), linear-gradient(270deg, $barColor 50%, $backgroundBarColor 50%, $backgroundBarColor);
-      }
-    }
+}
+@keyframes fadeDown {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 
+
 .logo{
-  top: 600px;
+  top: 625px;
   position: absolute;
   height: 163px;
   width: 100vw;
@@ -251,3 +69,105 @@ $half: round($loops / 2);
   font-size: 32px;
 }
 
+.navy{
+  color: $ms_navy;
+  text-align: center;
+}
+.spacer{
+  height: 21rem;
+}
+
+.modal{
+  width: 800px;
+  position: absolute;
+  top: 65px;
+  left: 112px;
+  .modalContent{
+    position: relative;
+    top: -32rem;
+    h1{ font-size: 5rem; } h2{ font-size: 2rem; }
+  }
+
+
+  &.ready{
+    animation: fadeDown 1.5s ease-out 0s forwards;
+  }
+  &.won{
+    animation: fadeUp 1.5s ease-out 0s forwards;
+  }
+
+}
+
+.progress-bar {
+  position: relative;
+  height: 50px;
+  width: 800px;
+  background-color: steelblue;
+  margin: 0 0 10px 0;
+  border-radius: 3px;
+}
+
+.progress-bar.test {
+  background-color: orange;
+}
+
+.progress-bar:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  height: 50px;
+  width: 0;
+  background-color: $ms_yellow;
+  opacity: 1;
+
+  will-change: transform;
+  transition: transform 500ms;
+  transform-origin: 0 0;
+}
+
+.progress-bar[data-progress]:after {
+  width: 100%;
+  border-radius: 3px;
+}
+
+.progress-bar[data-progress^="0.0"]:after {
+  transform: scaleX(0.1);
+}
+
+.progress-bar[data-progress^="0.1"]:after {
+  transform: scaleX(0.2);
+}
+
+.progress-bar[data-progress^="0.2"]:after {
+  transform: scaleX(0.3);
+}
+
+.progress-bar[data-progress^="0.3"]:after {
+  transform: scaleX(0.4);
+}
+
+.progress-bar[data-progress^="0.4"]:after {
+  transform: scaleX(0.5);
+}
+
+.progress-bar[data-progress^="0.5"]:after {
+  transform: scaleX(0.6);
+}
+
+.progress-bar[data-progress^="0.6"]:after {
+  transform: scaleX(0.7);
+}
+
+.progress-bar[data-progress^="0.7"]:after {
+  transform: scaleX(0.8);
+}
+
+.progress-bar[data-progress^="0.8"]:after {
+  transform: scaleX(0.9);
+}
+
+.progress-bar[data-progress^="0.9"]:after {
+  transform: scaleX(1);
+}
