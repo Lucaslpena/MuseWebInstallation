@@ -5,6 +5,8 @@ Feedback includes:
 * a bar under the head model to show focused state. This is mapped between an average starting limit and a threshold. Once passed will present a message on the screen.
 * LED control that shows the same data as the bar in the web-page, mapped between two points. When the threshold is reached it flashes.
 
+![GIF of The LEDS](https://github.com/Lucaslpena/MuseWebInstallation/blob/master/pix/MVI_3982.gif)
+
 # The Client
 This installation was made for the [MIPS](https://www.youtube.com/watch?v=hAfBOaPqLWo) conference of [Milestone Systems](https://www.milestonesys.com/about-us/) 
 
