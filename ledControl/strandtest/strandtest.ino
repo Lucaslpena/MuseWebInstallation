@@ -14,7 +14,7 @@ int state = 0; // 0 = idle, 1 = changing up; 2 = headset on; 3 changing down;
 unsigned long previousMillis = millis();
 unsigned long previousMillis2 = millis();
 unsigned long timeOn = millis();
-int winning = 10;
+int winning = 1;
 boolean newUser = true;
 int lastPush = 0;
 int j, keepOn;

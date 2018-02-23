@@ -22,7 +22,7 @@ function setPercentage(p){ //https://codepen.io/jwhitfieldseed/pen/JpmfF?page=1&
     [].forEach.call(bars, function(bar) {
         bar.setAttribute('data-progress', '' + (p/100));
     });
-    if (p == 100) {
+    if (p >= 99) {
         won();
     }
 };
@@ -47,7 +47,7 @@ var particles = [];
 
 var mAlphaAbs = 0.01, mBetaAbs = 0.01, mDeltaAbs = 0.01, mThetaAbs = 0.01, mGammaAbs = 0.01, mAcc = [0,0,0], mAbs;
 
-var head, touching = 0, mod = 0;
+var head, touching = 0, mod = 0, winningLimit = 0.35;
 
 function setData(msg){
     switch (msg.address){
@@ -88,8 +88,8 @@ function setup() {
 }
 function preload() {
     //head = loadModel('assets/HeadPlanes_Simple_High.obj');
-    //head = loadModel('assets/HeadPlanes_Simple_High2.obj');
-    head = loadModel('assets/HeadPlanes_Simple_Low.obj');
+    head = loadModel('assets/HeadPlanes_Simple_High2.obj');
+    //head = loadModel('assets/HeadPlanes_Simple_Low.obj');
 }
 function draw() {
     ambientLight(157,173,183);
@@ -116,7 +116,7 @@ function draw() {
         console.log(modAbs);
         modAbs = (modAbs == 0.0) ? 1.7 : modAbs;
         console.log(modAbs);
-        var mappedEEG = map(constrain(modAbs, 0, 1.7), 0, 1.7, 100, 0);
+        var mappedEEG = map(constrain(modAbs, winningLimit, 1.7), winningLimit, 1.7, 100, 0);
         setPercentage(Math.floor(mappedEEG));
     } else {
         mod = 0;
@@ -129,8 +129,6 @@ function draw() {
     //normalMaterial();
     scale(30);
     model(head);
-
-    //get edges to work from  https://raw.githubusercontent.com/Lucaslpena/MuseWebInstallation/9ccf022c88b991aa955ca9107ea159268d7491d1/dist/js/main.js?token=AG26OQe69jmrCpFlDxoZHruGyjgGkI7gks5adaP6wA%3D%3D
 }
 
 prevAX = 0;

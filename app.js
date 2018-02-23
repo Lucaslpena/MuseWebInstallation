@@ -4,7 +4,6 @@ var osc = require("osc"),
     nodeMuse = require("node-muse"),
     Muse = nodeMuse.Muse,
     pixel = require("node-pixel"),
-    five = require("johnny-five"),
     SerialPort = require('serialport');
 
 var getIPAddresses = function () {
@@ -69,7 +68,8 @@ var mAlphaAbs = 0.01,
     mGammaAbs = 0.01,
     mAbs = 0.01,
     touching = 0,
-    stateMachine = 1;
+    stateMachine = 1,
+    winningLimit = 0.35;
 function fitlterMsg(msg){
     //console.log(msg);
     switch (msg.address){
@@ -122,8 +122,8 @@ function stateCheck(){
     switch (stateMachine){
         case 2:
             console.log(mAbs);
-            var adjustedmAbs = constrain_range(mAbs, 0, 1.7);
-            var limit = Math.round(map_range(adjustedmAbs, 0, 1.7, 0, 79));
+            var adjustedmAbs = constrain_range(mAbs, winningLimit, 1.7);
+            var limit = Math.round(map_range(adjustedmAbs, winningLimit, 1.7, 0, 79));
             arduinoHeadsetOn(limit);
             break;
         default:
@@ -171,21 +171,6 @@ function arduinoHeadsetOn(val){
     var strd = String(val);
     port.write(strd + "\n");
 };
-                // setInterval(function() {
-                //     port.write(Buffer.from('A'), function (err) {
-                //         if (err) {
-                //             return console.log('Error on write: ', err.message);
-                //         }
-                //         console.log('message written');
-                //     })
-                // },1000);
-
-                // setInterval(function(){
-                //     setInterval(function(){
-                //         console.log('pushing new value');
-                //         port.write("5\n");
-                //     }, 100);
-                // }, 6000);
 
 
 function meditation(){
@@ -196,14 +181,6 @@ function meditation(){
     var timer = Date.now();
     var blinker = setInterval(function() {
 
-        // strip.color("#023852"); // blanks it out
-        // for (var i=0; i< pixel_list.length; i++) {
-        //     if (++pixel_list[i] >= strip.length) {
-        //         pixel_list[i] = 0;
-        //         if (++current_colors[i] >= colors.length) current_colors[i] = 0;
-        //     }
-        //     strip.pixel(pixel_list[i]).color(colors[current_colors[i]]);
-        // }
 
         if (stateMachine != 2){
             stateCheck();

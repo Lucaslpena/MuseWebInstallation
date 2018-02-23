@@ -58,6 +58,10 @@ canvas {
   color: #023852;
   text-align: center; }
 
+.white {
+  color: white;
+  text-align: center; }
+
 .spacer {
   height: 21rem; }
 
